@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏制作者 - 我的故事</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body class="pixel-theme">
+    <div class="game-console">
+        <a href="index.html" class="home-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="console-body">
+            <div class="left-joycon">
+                <div class="d-pad">
+                    <button class="d-btn up">▲</button>
+                    <button class="d-btn down">▼</button>
+                    <button class="d-btn left">◀</button>
+                    <button class="d-btn right">▶</button>
+                </div>
+            </div>
+
+            <div class="screen-section">
+                <div class="screen">
+                    <div class="screen-row">
+                        <h2>我喜欢的游戏</h2>
+                        <div class="game-row-container">
+                            <button class="page-btn prev-btn" data-screen="favorite">◀</button>
+                            <div class="game-row" id="favorite-games">
+                                <!-- 游戏图片将通过JS动态添加 -->
+                            </div>
+                            <button class="page-btn next-btn" data-screen="favorite">▶</button>
+                        </div>
+                        <div class="page-indicator" id="favorite-indicator">1/4</div>
+                    </div>
+                    
+                    <div class="screen-row">
+                        <h2>我制作的游戏</h2>
+                        <div class="game-row-container">
+                            <button class="page-btn prev-btn" data-screen="my">◀</button>
+                            <div class="game-row" id="my-games">
+                                <!-- 游戏图片将通过JS动态添加 -->
+                            </div>
+                            <button class="page-btn next-btn" data-screen="my">▶</button>
+                        </div>
+                        <div class="page-indicator" id="my-indicator">1/1</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-joycon">
+                <div class="action-buttons">
+                    <button class="action-btn">A</button>
+                    <button class="action-btn">B</button>
+                </div>
+            </div>
+
+            <div class="console-info">
+                <div class="steam-info">
+                    <i class="fab fa-steam"></i>
+                    <span>Steam Friend Code: 1852645712</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加 Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <script>
+        // 游戏数据
+        const games = {
+            favorite: [
+                [
+                    { img: 'images/g1.jpg', title: '游戏1' },
+                    { img: 'images/g2.jpg', title: '游戏2' },
+                    { img: 'images/g3.jpg', title: '游戏3' },
+                    { img: 'images/g4.jpg', title: '游戏4' },
+                    { img: 'images/g5.jpg', title: '游戏5' }
+                ],
+                [
+                    { img: 'images/g6.jpg', title: '游戏6' },
+                    { img: 'images/g7.jpg', title: '游戏7' },
+                    { img: 'images/g8.jpg', title: '游戏8' },
+                    { img: 'images/g9.jpg', title: '游戏9' },
+                    { img: 'images/g10.jpg', title: '游戏10' }
+                ],
+                [
+                    { img: 'images/g11.jpg', title: '游戏11' },
+                    { img: 'images/g12.jpg', title: '游戏12' },
+                    { img: 'images/g13.jpg', title: '游戏13' },
+                    { img: 'images/g14.jpg', title: '游戏14' },
+                    { img: 'images/g15.jpg', title: '游戏15' }
+                ],
+                [
+                    { img: 'images/g16.jpg', title: '游戏16' },
+                    { img: 'images/g17.png', title: '游戏17' }
+                ]
+            ],
+            my: [
+                [
+                    { img: 'images/mg1.gif', title: '像素冒险' },
+                    { img: 'images/mg2.jpg', title: '解密游戏' }
+                ]
+            ]
+        };
+
+        let currentPage = {
+            favorite: 0,
+            my: 0
+        };
+
+        function updateGameDisplay(type) {
+            const display = document.getElementById(`${type}-games`);
+            const page = games[type][currentPage[type]];
+            display.innerHTML = page.map((game, index) => {
+                // 如果是"我的游戏"部分的第一个游戏，添加链接
+                if (type === 'my' && currentPage[type] === 0 && index === 0) {
+                    return `
+                        <a href="_wvy_the_sun_is_rising_and_stree (1).html" class="game-item" style="text-decoration: none;">
+                            <img src="${game.img}" alt="${game.title}">
+                            <h3>${game.title}</h3>
+                        </a>
+                    `;
+                } else {
+                    return `
+                        <div class="game-item">
+                            <img src="${game.img}" alt="${game.title}">
+                            <h3>${game.title}</h3>
+                        </div>
+                    `;
+                }
+            }).join('');
+            
+            document.getElementById(`${type}-indicator`).textContent = 
+                `${currentPage[type] + 1}/${games[type].length}`;
+        }
+
+        // 添加按钮事件监听
+        document.querySelectorAll('.page-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.dataset.screen;
+                if (btn.classList.contains('prev-btn')) {
+                    currentPage[type] = (currentPage[type] - 1 + games[type].length) % games[type].length;
+                } else {
+                    currentPage[type] = (currentPage[type] + 1) % games[type].length;
+                }
+                updateGameDisplay(type);
+            });
+        });
+
+        // 更新D-pad控制
+        document.querySelector('.d-btn.left').addEventListener('click', () => {
+            document.querySelectorAll('.prev-btn').forEach(btn => btn.click());
+        });
+        document.querySelector('.d-btn.right').addEventListener('click', () => {
+            document.querySelectorAll('.next-btn').forEach(btn => btn.click());
+        });
+
+        // 初始化显示
+        updateGameDisplay('favorite');
+        updateGameDisplay('my');
+    </script>
+</body>
+</html>

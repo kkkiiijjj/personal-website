@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调酒师 - 我的故事</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="bartender-page">
+        <!-- 对话气泡 -->
+        <div class="speech-bubble" id="speechBubble">
+            <p id="bartenderText">今晚想来点什么？</p>
+        </div>
+
+        <!-- 喝一杯按钮 -->
+        <button class="drink-btn" id="drinkBtn">
+            <span class="btn-text">喝一杯</span>
+            <span class="btn-icon">🍸</span>
+        </button>
+
+        <!-- 音频元素 -->
+        <audio id="glassSound" preload="auto">
+            <source src="assets/audio/glass-clink.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="bgMusic1" loop preload="auto">
+            <source src="assets/audio/bar-ambience-1.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="bgMusic2" loop preload="auto">
+            <source src="assets/audio/bar-ambience-2.mp3" type="audio/mpeg">
+        </audio>
+
+        <!-- 社交媒体联系方式 -->
+        <div class="social-contact">
+            <a href="https://www.xiaohongshu.com/user/profile/1567089635" class="social-link xiaohongshu">
+                <i class="fas fa-heart"></i>
+                <span>关注我的小红书: 1567089635</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const bartenderQuotes = [
+            "今晚想喝点什么？让我来调制一杯能让你放松的鸡尾酒。？",
+            "每杯鸡尾酒都是一个故事，您想听听它的故事吗？？",
+            "看起来你需要一杯马提尼",
+            "要试试今晚的特调吗？",
+            "心情不好？来杯威士忌吧",
+            "这杯酒，我特别为您调制，希望您喜欢。",
+            "让这杯酒，带您开启一个美好的夜晚。",
+            "您想喝点什么？只要不是让我调出‘忘情水’,我都行。",
+            "这杯算我请你的"
+        ];
+
+        const speechBubble = document.getElementById('speechBubble');
+        const bartenderText = document.getElementById('bartenderText');
+        const drinkBtn = document.getElementById('drinkBtn');
+        const glassSound = document.getElementById('glassSound');
+        const bgMusic1 = document.getElementById('bgMusic1');
+        const bgMusic2 = document.getElementById('bgMusic2');
+
+        let currentMusic = bgMusic1;
+        let isPlaying = false;
+
+        // 预加载音频
+        window.addEventListener('load', () => {
+            glassSound.load();
+            bgMusic1.load();
+            bgMusic2.load();
+        });
+
+        // 切换对话内容
+        speechBubble.addEventListener('click', () => {
+            const randomQuote = bartenderQuotes[Math.floor(Math.random() * bartenderQuotes.length)];
+            bartenderText.textContent = randomQuote;
+            
+            // 添加动画效果
+            speechBubble.classList.remove('bubble-pop');
+            void speechBubble.offsetWidth; // 触发重排
+            speechBubble.classList.add('bubble-pop');
+        });
+
+        // 喝一杯按钮点击事件
+        drinkBtn.addEventListener('click', () => {
+            // 播放碰杯音效
+            glassSound.currentTime = 0; // 重置音效起始位置
+            
+            // 使用 Promise 来确保音效播放
+            const playGlassSound = glassSound.play();
+            if (playGlassSound !== undefined) {
+                playGlassSound.catch(error => {
+                    console.log("播放音效失败:", error);
+                });
+            }
+
+            // 按钮动画
+            drinkBtn.classList.add('btn-click');
+            setTimeout(() => drinkBtn.classList.remove('btn-click'), 200);
+
+            // 处理背景音乐
+            if (!isPlaying) {
+                // 第一次点击，开始播放音乐
+                const playMusic = currentMusic.play();
+                if (playMusic !== undefined) {
+                    playMusic.then(() => {
+                        isPlaying = true;
+                    }).catch(error => {
+                        console.log("播放音乐失败:", error);
+                    });
+                }
+            } else {
+                // 已经在播放，切换音乐
+                currentMusic.pause();
+                currentMusic.currentTime = 0;
+                currentMusic = currentMusic === bgMusic1 ? bgMusic2 : bgMusic1;
+                
+                const playMusic = currentMusic.play();
+                if (playMusic !== undefined) {
+                    playMusic.catch(error => {
+                        console.log("切换音乐失败:", error);
+                    });
+                }
+            }
+        });
+
+        // 添加音量控制（可选）
+        glassSound.volume = 0.6; // 碰杯音效音量
+        bgMusic1.volume = 0.4; // 背景音乐音量
+        bgMusic2.volume = 0.4; // 背景音乐音量
+    </script>
+</body>
+</html> 
